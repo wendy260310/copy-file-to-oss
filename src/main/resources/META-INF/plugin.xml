@@ -1,0 +1,34 @@
+<idea-plugin>
+    <id>linlan.tech.copy-to-oss</id>
+    <name>CopyToOss</name>
+    <vendor email="linlan.zcj@alibaba-inc.com" url="http://www.1688.com">Alibaba</vendor>
+
+    <description><![CDATA[
+    copy specific file to oss server
+    ]]></description>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+
+        <group id="action.CopyToOssActionGroup" class="action.CopyToOssActionGroup" text="CopyToOss"
+               description="copy file to oss"
+               popup="true">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <action id="copyToOSSAction" class="action.CopyToOSSAction" text="copy to oss"
+                    description="copy to oss" popup="true">
+            </action>
+            <action class="action.ConfigBulkAction" id="configOSSAction" text="config bulk" popup="true">
+            </action>
+        </group>
+    </actions>
+</idea-plugin>
