@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'linlan.tech'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'

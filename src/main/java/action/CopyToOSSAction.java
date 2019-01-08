@@ -23,6 +23,23 @@ public class CopyToOSSAction extends AnAction {
 
     private static final Logger log = Logger.getInstance(CopyToOSSAction.class);
 
+    private String purifyCmdPath(String cmd) {
+        if (cmd.endsWith("osscmd")) {
+            return cmd;
+        }
+        if (cmd.endsWith("/")) {
+            return cmd + "osscmd";
+        }
+        return cmd + "/osscmd";
+    }
+
+    private String purifyPrefixPath(String prefixPath) {
+        if (StringUtils.isEmpty(prefixPath) || prefixPath.endsWith("/")) {
+            return prefixPath;
+        }
+        return prefixPath + "/";
+    }
+
     @Override
     public void actionPerformed(AnActionEvent event) {
         String cmd = ConfigBulkAction.getCmdPathStored();
@@ -31,6 +48,7 @@ public class CopyToOSSAction extends AnAction {
             Messages.showErrorDialog("please config oss cmd first ", "Notice");
             return;
         }
+        cmd = purifyCmdPath(cmd);
         VirtualFile file = event.getData(DataKeys.VIRTUAL_FILE);
         if (file.isDirectory()) {
             int ret = Messages.showOkCancelDialog("Are you sure to copy all files in this directory to oss?",
@@ -42,7 +60,7 @@ public class CopyToOSSAction extends AnAction {
         e = null;
         AtomicInteger total = new AtomicInteger(0);
         AtomicInteger error = new AtomicInteger(0);
-        uploadToOss(file, cmd, bulk, ConfigBulkAction.getFilePrefixStored(),
+        uploadToOss(file, cmd, bulk, purifyPrefixPath(ConfigBulkAction.getFilePrefixStored()),
             total, error);
         if (e != null) {
             if (e instanceof FileNotFoundException) {
@@ -60,7 +78,7 @@ public class CopyToOSSAction extends AnAction {
                              String cmd, String bulk, String filePrefix, AtomicInteger total, AtomicInteger error) {
         if (!f.isDirectory()) {
             String finalCmd = cmd + " put " + f.getPath() +
-                " oss://" + bulk + "/" + ((StringUtils.isEmpty(filePrefix)) ? "" : filePrefix + "/")
+                " oss://" + bulk + "/" + filePrefix
                 + f.getName();
 
             try {
