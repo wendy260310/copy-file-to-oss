@@ -49,23 +49,26 @@ public class CopyToOSSAction extends AnAction {
             return;
         }
         cmd = purifyCmdPath(cmd);
-        VirtualFile file = event.getData(DataKeys.VIRTUAL_FILE);
-        if (file.isDirectory()) {
-            int ret = Messages.showOkCancelDialog("Are you sure to copy all files in this directory to oss?",
-                "Notice", Messages.getInformationIcon());
-            if (ret == Messages.CANCEL) {
-                return;
-            }
-        }
+        VirtualFile[] files = event.getData(DataKeys.VIRTUAL_FILE_ARRAY);
         e = null;
         AtomicInteger total = new AtomicInteger(0);
         AtomicInteger error = new AtomicInteger(0);
-        uploadToOss(file, cmd, bulk, purifyPrefixPath(ConfigBulkAction.getFilePrefixStored()),
-            total, error);
-        if (e != null) {
-            if (e instanceof FileNotFoundException) {
-                Messages.showErrorDialog("osscmd not found,make sure you " + cmd + " exists ",
-                    "Notice");
+
+        for (VirtualFile f : files) {
+            if (f.isDirectory()) {
+                int ret = Messages.showOkCancelDialog("Are you sure to copy all files in this directory to oss?",
+                    "Notice", Messages.getInformationIcon());
+                if (ret == Messages.CANCEL) {
+                    continue;
+                }
+            }
+            uploadToOss(f, cmd, bulk, purifyPrefixPath(ConfigBulkAction.getFilePrefixStored()),
+                total, error);
+            if (e != null) {
+                if (e instanceof FileNotFoundException) {
+                    Messages.showErrorDialog("osscmd not found,make sure you " + cmd + " exists ",
+                        "Notice");
+                }
             }
         }
 
